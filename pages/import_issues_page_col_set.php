@@ -88,12 +88,14 @@
 			$t_file_content = array_merge($t_file_content);
 		}
 	}
+	unset( $t_file_line );
 
 	if( is_writable( $f_import_file['tmp_name'] ) ) {
 		if( $handle = fopen( $f_import_file['tmp_name'], "wb" ) ) {
 			foreach( $t_file_content as &$t_file_line ) {
 				$t_written = fwrite( $handle , $t_file_line . "\n" );
 			}
+			unset( $t_file_line );
 			fclose( $handle );
 		}
 		else {
@@ -170,6 +172,7 @@
 		}
 		echo '</tr>';
 	}
+	unset( $t_file_line );
 ?>
 </fieldset>
                     </table>
@@ -215,7 +218,7 @@
 <?php
 	$t_column_title = array_map( 'trim', $t_column_title );
 
-	for( $t_fields = $g_all_fields, $i = 0; $i < $t_column_count; next( $t_fields ), $i++ ) {
+	for( $i = 0; $i < $t_column_count; $i++ ) {
 		if ( is_blank( $t_column_title[$i] ) ) {
 			continue;
 		}

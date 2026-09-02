@@ -108,10 +108,7 @@ function read_csv_file( $p_filename ) {
 
 	$t_file_raw_content = file_get_contents( $p_filename );
 
-	# Convert special chars to html entities
-	$t_file_content = mb_convert_encoding($t_file_raw_content, 'HTML-ENTITIES', "UTF-8");
-
-	preg_match_all($t_regexp, $t_file_content, $t_file_rows);
+	preg_match_all($t_regexp, $t_file_raw_content, $t_file_rows);
 	return $t_file_rows[1];
 }
 
@@ -139,7 +136,7 @@ function category_get_id_by_name_ne( $p_category_name, $p_project_id ) {
 }
 
 function prepare_output( $t_string , $t_encode_only = false ) {
-	return string_html_specialchars( utf8_encode($t_string) );
+	return string_html_specialchars( $t_string );
 }
 
 function get_csv_import_category_id( $p_project_id, $p_category_name ) {
@@ -221,11 +218,8 @@ function get_date_column_value( $p_name, $p_row, $p_default ) {
 
 
 function string_MkPretty( $t_str ) {
-	$t_str = utf8_encode(strtolower(trim(utf8_decode($t_str))));
-	$t_str = preg_replace('/\xfc/ui', 'ue', $t_str);
-	$t_str = preg_replace('/\xf6/ui', 'oe', $t_str);
-	$t_str = preg_replace('/\xe4/ui', 'ae', $t_str);
-	$t_str = preg_replace('/\xdf/ui', 'ss', $t_str);
+	$t_str = mb_strtolower( trim( $t_str ), 'UTF-8' );
+	$t_str = str_replace( ['ü', 'ö', 'ä', 'ß'], ['ue', 'oe', 'ae', 'ss'], $t_str );
 	return $t_str;
 }
 
@@ -274,7 +268,7 @@ function get_user_column_value( $p_name, $p_row, $p_default ) {
 function get_column_value( $p_name, $p_row, $p_default = '' ) {
 	global $f_columns;
 	$t_column = array_isearch( $p_name, $f_columns );
-	$t_value = ( ($t_column === false) || (!isset( $p_row[$t_column] )) ) ? $p_default : utf8_encode(trim( $p_row[$t_column] ));
+	$t_value = ( ($t_column === false) || (!isset( $p_row[$t_column] )) ) ? $p_default : trim( $p_row[$t_column] );
 
 	$t_value = str_replace( '\n', "\n", $t_value );
 	return $t_value;
@@ -297,16 +291,12 @@ function get_category_column_value( $p_name, $p_row, $p_project, $p_default ) {
  *
  * @param mixed
  */
-function hvar_dump()
+function hvar_dump( ...$args )
 {
-	$numargs = func_num_args();
-	$arg_list = func_get_args();
 	echo '<pre style="text-align: left;">';
-	for ($i = 0; $i < $numargs; $i++)
-	{
-		var_dump($arg_list[$i]);
+	foreach ( $args as $arg ) {
+		var_dump( $arg );
 	}
-
 	echo '</pre>';
 }
 

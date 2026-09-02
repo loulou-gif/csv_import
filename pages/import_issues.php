@@ -61,7 +61,7 @@ if( file_exists( $f_import_file ) ) {
 
 # Check given parameters - Columns
 if( count( $f_columns ) <= 0 ) {
-	trigger_error( ERROR_EMPTY_FIELD, ERROR );
+	plugin_error( 'ERROR_EMPTY_FIELD', ERROR );
 }
 
 # ignore_column have to be ... ignored
